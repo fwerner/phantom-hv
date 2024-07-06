@@ -26,7 +26,6 @@ classifiers = [
 [project.scripts]
 phantomhv-ctl = "phantomhv.tools.ctl:main"
 phantomhv-webui = "phantomhv.tools.webui:main"
-phantomhv-io = "phantomhv.tools.io:main"
 
 [project.urls]
 Homepage = "https://github.com/fwerner/phantom-hv/"
