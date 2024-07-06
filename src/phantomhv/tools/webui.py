@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Web UI for monitoring and control a Phantom HV crate.
+Web UI to monitor and control a Phantom HV crate.
 """
 
 import argparse
@@ -21,7 +21,7 @@ def parse_host_port(s, default_host=None, default_port=None):
 
 
 def main():
-    parser = argparse.ArgumentParser("phantomhv-webui")
+    parser = argparse.ArgumentParser("phantomhv-webui", description=__doc__)
     parser.add_argument(
         "address",
         type=lambda s: parse_host_port(s, default_port=iostack.default_port),

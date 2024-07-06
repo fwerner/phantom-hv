@@ -1,15 +1,24 @@
 # Phantom HV Control & Monitoring Software
 
-Software to control and monitor a Phantom HV crate via Ethernet.
+This repository contains software to control and monitor a Phantom HV crate via
+Ethernet. The Phantom HV hardware is a modular 3-RU system that combines
+high-voltage supplies and high-frequency pulse pick-off circuits to operate
+photomultiplier tubes (PMTs). It has been designed for the
+[SWGO](https://www.swgo.org/) and lab applications.
 
-## Installation
+<img alt="Phantom HV crate equipped with one master and one slave module."
+     src="https://github.com/fwerner/phantom-hv/blob/main/phantom-hv-crate.jpg?raw=true"
+     height="250px">
+
+## Software installation
 
 You can find the newest packaged release of this library on
-[PyPi](https://pypi.org/project/phantom-hv/).
+[PyPi](https://pypi.org/project/phantom-hv/). Untagged versions
+are released on [TestPyPi](https://test.pypi.org/project/phantom-hv/) as well.
 
-Install via `pip install phantomhv`.
+Install via `pip install phantom-hv`.
 
-Upgrade to the newest release with `pip install -U phantomhv`.
+Upgrade to the newest release with `pip install -U phantom-hv`.
 
 ## Requirements
 
@@ -55,7 +64,8 @@ options:
 
 ### `phantomhv-webui` web interface
 
-![Screen recording of the Phantom HV Web UI being run in native mode.](webui-recording.gif)
+<img alt="Screen recording of the Phantom HV Web UI being run in native mode."
+     src="https://github.com/fwerner/phantom-hv/blob/main/webui-recording.gif?raw=true">
 
 ```
 usage: phantomhv-webui [-h] [-n {1,2,3,4,5,6,7,8}] [-s | -b hostname:port] ip:port

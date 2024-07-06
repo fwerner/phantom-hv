@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-phantomhv-ctl: low-level control and monitoring command-line interface.
+Low-level control and monitoring command-line tool for Phantom HV modules.
 """
 
 import argparse
@@ -18,7 +18,7 @@ def _parse_set_dac_arg(arg):
 
 
 def main():
-    parser = argparse.ArgumentParser("phantomhv-ctl")
+    parser = argparse.ArgumentParser("phantomhv-ctl", description=__doc__)
     parser.add_argument("address", help="IP address or hostname of the master module")
     parser.add_argument(
         "--slot",
@@ -27,52 +27,53 @@ def main():
         choices=range(8),
         help="module slot to communicate with",
     )
-    parser.add_argument(
-        "--monitor",
-        action="store_true",
+    subparsers = parser.add_subparsers(dest="command")
+    subparsers.add_parser(
+        "monitor",
         help="continuously read and print slave states",
     )
-    parser.add_argument(
-        "--monitor-adcs",
-        action="store_true",
+    subparsers.add_parser(
+        "monitor-adcs",
         help="continuously read and print slave ADC readings",
     )
-    parser.add_argument(
-        "--monitor-interval",
+    subparsers.add_parser(
+        "monitor-interval",
         type=float,
         default=0.5,
         metavar="dt",
         help="set monitoring interval (default: 1 s)",
     )
-    parser.add_argument(
-        "--set-dac",
+    subparsers.add_parser(
+        "set-dac",
         type=_parse_set_dac_arg,
         metavar="dac,level",
         help="set output level (0-4095) of DAC (0-3)",
     )
-    parser.add_argument("--boot", action="store_true", help="boot application slot")
-    parser.add_argument("--reset", action="store_true", help="reset into bootloader")
-    parser.add_argument(
-        "--flash",
-        metavar="BIN_IMAGE",
-        type=argparse.FileType("rb"),
+    subparsers.add_parser("boot", help="boot application slot")
+    subparsers.add_parser("reset", help="reset into bootloader")
+    flash_parser = subparsers.add_parser(
+        "flash",
         help="flash binary firmware image into application slot",
     )
-    parser.add_argument("--unlock-hv", action="store_true", help="enable HV")
-    parser.add_argument("--lock-hv", action="store_true", help="disable HV")
-    parser.add_argument(
-        "--enable-hv",
-        choices=range(3),
-        type=int,
-        default=None,
+    flash_parser.add_argument(
+        "-f",
+        "--file",
+        metavar="BIN_IMAGE",
+        type=argparse.FileType("rb"),
+        help="firmware image to write into flash",
+    )
+    subparsers.add_parser("unlock-hv", help="enable HV")
+    subparsers.add_parser("lock-hv", help="disable HV")
+    enable_hv_parser = subparsers.add_parser(
+        "enable-hv",
         help="enable HV channel",
     )
-    parser.add_argument(
-        "--disable-hv",
-        choices=range(3),
-        type=int,
-        default=None,
-        help="disable HV channel",
+    enable_hv_parser.add_argument(
+        "channel", choices=range(3), type=int, metavar="N", help="channel to enable"
+    )
+    disable_hv_parser = subparsers.add_parser("disable-hv", help="disable HV channel")
+    disable_hv_parser.add_argument(
+        "channel", choices=range(3), type=int, metavar="N", help="channel to disable"
     )
 
     args = parser.parse_args()
@@ -90,8 +91,8 @@ def main():
         io.flash_app(args.flash.read(), args.slot)
         state_after = io.read_slave_state(args.slot)
         if (
-            state_after.spi_rx_errors > state_before.spi_rx_errors
-            or state_after.spi_rx_overruns > state_before.spi_rx_overruns
+            state_after.spi_rx_errors != state_before.spi_rx_errors
+            or state_after.spi_rx_overruns != state_before.spi_rx_overruns
         ):
             print("[ERROR] SPI communication error - please retry.")
             sys.exit(1)
