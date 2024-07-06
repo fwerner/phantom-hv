@@ -19,6 +19,7 @@ import sys
 import binascii
 import time
 
+default_address = "192.168.1.115"
 default_port = 512
 default_timeout = 0.3
 default_retries = 3
@@ -541,7 +542,6 @@ if __name__ == "__main__":
         return True
 
     # Parse command-line arguments
-    default_address="192.168.1.115"
     arg_epilog="""Bootloader flags:
 {}
 """.format(json.dumps({i.name:i.value for i in BootOptFlags},indent=2))

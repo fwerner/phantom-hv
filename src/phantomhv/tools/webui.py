@@ -23,29 +23,28 @@ def parse_host_port(s, default_host=None, default_port=None):
 def main():
     parser = argparse.ArgumentParser("phantomhv-webui", description=__doc__)
     parser.add_argument(
-        "address",
+        "--address",
+        default=f"{iostack.default_address}:{iostack.default_port}",
+        required=False,
         type=lambda s: parse_host_port(s, default_port=iostack.default_port),
         metavar="ip:port",
-        help="IP address or hostname of the master module (default port: 512)",
+        help=f"IP address or hostname of the device (default: {iostack.default_address}:{iostack.default_port})",
     )
     parser.add_argument(
-        "-n",
         "--num-slots",
         default=1,
         type=int,
         choices=range(1, 9),
-        help="number of module slots to display",
+        help="number of modules to display (default: 1)",
     )
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
-        "-s",
         "--show",
         default=False,
         action="store_true",
         help="open UI in native window",
     )
     group.add_argument(
-        "-b",
         "--bind",
         default=("127.0.0.1", 8080),
         type=lambda s: parse_host_port(s, default_host="127.0.0.1", default_port=8080),
