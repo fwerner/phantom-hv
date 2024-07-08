@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
-## Fixed
+## [0.1.2] - 2024-07-08
+
+### Fixed
 
 - smoother UX with web UI toggles
 - untested refactor of command-line parser
