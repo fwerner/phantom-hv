@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## Unreleased
+
+## Fixed
+
+- smoother UX with web UI toggles
+- untested refactor of command-line parser
+
+## [0.1.1] - 2024-07-06
+
+### Fixed
+
+- remove non-existing I/O tool
+
 ## [0.1] - 2024-07-06
 
 ### Changed

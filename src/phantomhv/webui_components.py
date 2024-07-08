@@ -71,6 +71,7 @@ class PhantomHVWebUI:
         self.default_update_interval = update_interval
         self.timeout_notification = None
         self.update_time = None
+        self.num_failures = 0
 
         self.hv_state = state_buffer.PhantomHVStateBuffer(
             host, port=port, num_slots=num_slots
@@ -172,6 +173,7 @@ class PhantomHVWebUI:
                             .bind_value(slot_state, "hv_unlocked")
                             .bind_enabled_from(slot_state, "hv_unlocked_ext")
                         ).classes("place-self-center")
+                        slot_hv_enable._props["loopback"] = False  # nicer UX
                     else:
                         # HV unlock
                         ui.label("")
@@ -186,6 +188,7 @@ class PhantomHVWebUI:
                         .bind_enabled_from(slot_hv_enable, "value")
                         .classes("place-self-center")
                     )
+                    channel_hv_enable._props["loopback"] = False  # nicer UX
 
                     # Set voltage
                     channel_hv_set = (

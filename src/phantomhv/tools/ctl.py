@@ -27,7 +27,6 @@ def main():
         help="flash binary firmware image into application slot",
     )
     flash_parser.add_argument(
-        "-f",
         "--file",
         metavar="BIN_IMAGE",
         type=argparse.FileType("rb"),
@@ -46,10 +45,10 @@ def main():
     )
     set_parsers = subparsers.add_parser(
         "set", help="set hardware registers"
-    ).add_subparsers(dest="set")
+    ).add_subparsers(dest="set", required=True)
     set_dac_parser = set_parsers.add_parser("dac")
     set_dac_parser.add_argument(
-        "dac-value",
+        "dac_value",
         type=_parse_set_dac_arg,
         metavar="dac,level",
         help="set output level (0-4095) of DAC (0-3)",
@@ -93,7 +92,7 @@ def main():
 
     args = parser.parse_args()
 
-    io = PhantomHVIO(args.ip)
+    io = PhantomHVIO(args.ip, port=args.port)
 
     if args.command == "boot":
         io.boot_app(args.slot)
@@ -102,7 +101,7 @@ def main():
     elif args.command == "flash":
         print(f"Flashing {args.ip}...")
         state_before = io.read_slave_state(args.slot)
-        io.flash_app(args.flash.read(), args.slot)
+        io.flash_app(args.file.read(), args.slot)
         state_after = io.read_slave_state(args.slot)
         if (
             state_after.spi_rx_errors != state_before.spi_rx_errors

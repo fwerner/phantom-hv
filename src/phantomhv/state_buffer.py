@@ -97,11 +97,12 @@ class PhantomHVSlotStateBuffer:
             raise ValueError("HV interlock error")
 
         cfg = self.dynamic_cfg
-        if unlock:
-            cfg.hv_enable |= 1 << 3
-        else:
-            cfg.hv_enable = 0  # disable all HV supplies at the same time to avoid alert
-        self.io.write_slave_dynamic_cfg(self.slot, cfg)
+        with self.io.lock:
+            if unlock:
+                cfg.hv_enable |= 1 << 3
+            else:
+                cfg.hv_enable = 0  # disable all HV supplies at the same time to avoid alert
+            self.io.write_slave_dynamic_cfg(self.slot, cfg)
 
     @property
     def hvs(self):
@@ -135,11 +136,12 @@ class PhantomHVChannelStateBuffer:
     @hv_enabled.setter
     def hv_enabled(self, enable):
         cfg = self.dynamic_cfg
-        if enable:
-            cfg.hv_enable |= 1 << self.channel
-        else:
-            cfg.hv_enable &= ~(1 << self.channel)
-        self.io.write_slave_dynamic_cfg(self.slot, cfg)
+        with self.io.lock:
+            if enable:
+                cfg.hv_enable |= 1 << self.channel
+            else:
+                cfg.hv_enable &= ~(1 << self.channel)
+            self.io.write_slave_dynamic_cfg(self.slot, cfg)
 
     @property
     def hv(self) -> float:
@@ -154,9 +156,10 @@ class PhantomHVChannelStateBuffer:
         if hv is None:
             hv = 0.0
         hv = max(0.0, min(hv, 2000.0))
-        cfg = self.dynamic_cfg
-        cfg.hv_dac[self.channel] = round(hv * 2.048)
-        self.io.write_slave_dynamic_cfg(self.slot, cfg)
+        with self.io.lock:
+            cfg = self.dynamic_cfg
+            cfg.hv_dac[self.channel] = round(hv * 2.048)
+            self.io.write_slave_dynamic_cfg(self.slot, cfg)
 
     @property
     def current(self):

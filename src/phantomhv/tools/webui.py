@@ -48,7 +48,7 @@ def main():
         "--bind",
         default=("127.0.0.1", 8080),
         type=lambda s: parse_host_port(s, default_host="127.0.0.1", default_port=8080),
-        metavar="hostname:port",
+        metavar="host:port",
         help="bind web server to a specific network interface/port (default: 127.0.0.1:8080; use 0.0.0.0 to bind to all interfaces)",
     )
 

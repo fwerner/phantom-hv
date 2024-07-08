@@ -25,6 +25,11 @@ Upgrade to the newest release with `pip install -U phantom-hv`.
 - Python 3 for the core library and command-line interface
 - nicegui, pywebview, plotly and numpy for the Web UI (install via conda/mamba
   or pip)
+  - note that pywebview (which is only needed for displaying the UI in a native
+    application window) may require additional GUI framework components with
+    Python extensions, especially on an otherwise headless server (e.g. by
+    installing `pywebview[qt]`, see the
+    [documentation](https://pywebview.flowrl.com/guide/installation.html))
 
 ## Tools
 
