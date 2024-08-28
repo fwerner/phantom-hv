@@ -72,6 +72,7 @@ class PhantomHVWebUI:
         self.timeout_notification = None
         self.update_time = None
         self.num_failures = 0
+        self.update_timer = None
 
         self.hv_state = state_buffer.PhantomHVStateBuffer(
             host, port=port, num_slots=num_slots
@@ -128,7 +129,7 @@ class PhantomHVWebUI:
         """
         )
         app.on_exception(self.on_exception)
-        ui.timer(0, self.update_state, once=True)
+        self.update_timer = ui.timer(0, self.update_state, once=True)
 
     def build_ui(self):
         with ui.grid(columns=9 * "auto " + "1fr").classes(
@@ -240,6 +241,10 @@ class PhantomHVWebUI:
         builds the UI. On failure, displays a notification and 'connecting'
         message."""
 
+        if self.update_timer:
+            self.update_timer.remove(self.update_timer)
+            self.update_timer = None
+
         try:
             await run.io_bound(self.hv_state.update)
         except (iostack.TimeoutError, OSError):
@@ -262,7 +267,7 @@ class PhantomHVWebUI:
             else:
                 self.timeout_notification.set_visibility(True)
 
-            ui.timer(
+            self.update_timer = ui.timer(
                 reconnect_interval,
                 self.update_state,
                 once=True,
@@ -286,7 +291,7 @@ class PhantomHVWebUI:
             x, y = update()
             timeseries.update(x, y)
 
-        ui.timer(
+        self.update_timer = ui.timer(
             self.update_time - now,
             self.update_state,
             once=True,

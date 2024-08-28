@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Fixed
+
+- slow leak of NiceGUI one-shot timer objects
+
 ## [0.1.3] - 2024-07-08
 
 ### Fixed
