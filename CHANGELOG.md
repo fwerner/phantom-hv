@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [0.1.5] - 2025-02-04
+
 ### Fixed
 
 - make compatible with Python 3.8
