@@ -3,9 +3,13 @@ Components for the Web UI.
 """
 
 import collections
-import importlib
 import time
 import types
+
+try:
+    from importlib.resources import files
+except ImportError:  # Python <3.9
+    from importlib_resources import files
 
 from nicegui import app, ui, run, elements
 import numpy as np
@@ -112,7 +116,7 @@ class PhantomHVWebUI:
         )
 
         app.add_static_files(
-            "/woff2", importlib.resources.files("phantomhv") / "resources" / "woff2"
+            "/woff2", files("phantomhv") / "resources" / "woff2"
         )
         ui.add_head_html(
             r"""
