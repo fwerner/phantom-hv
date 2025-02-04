@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Changed
+
+- update Github actions
+
 ## [0.1.4] - 2024-08-28
 
 ### Fixed
