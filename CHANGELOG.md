@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Fixed
+
+- make compatible with Python 3.8
+  - use backport of importlib.resources
+  - work around fastapi/starlette bugs leading to 404s for static files
+
 ### Changed
 
 - update Github actions
