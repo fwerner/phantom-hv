@@ -43,7 +43,7 @@ def get_hv_timeseries_updater(
     """Returns a function that on each call puts the latest voltage measurements
     of the given module slot into a ring buffer of `duration_sec` seconds
     length, and returns these measurements as a tuple of (numpy datetime64
-    timestamps, voltages 2d array)."""
+    timestamps, voltages/V 2d array)."""
     t, v = collections.deque(), collections.deque()
 
     def get_hv_timeseries():
@@ -61,6 +61,32 @@ def get_hv_timeseries_updater(
         return np.array(t, dtype="datetime64[ms]"), np.array(v)
 
     return get_hv_timeseries
+
+
+def get_current_timeseries_updater(
+    slot: state_buffer.PhantomHVSlotStateBuffer, duration_sec=65
+):
+    """Returns a function that on each call puts the latest current measurements
+    of the given module slot into a ring buffer of `duration_sec` seconds
+    length, and returns these measurements as a tuple of (numpy datetime64
+    timestamps, currents/mA 2d array)."""
+    t, i = collections.deque(), collections.deque()
+
+    def get_current_timeseries():
+        time_ms = round(slot.last_update * 1000)
+        currents = slot.currents
+
+        if len(t) == 0 or time_ms > t[-1]:
+            t.append(time_ms)
+            i.append(currents)
+
+            while (t[-1] - t[0]) / 1000 > duration_sec:
+                t.popleft()
+                i.popleft()
+
+        return np.array(t, dtype="datetime64[ms]"), 1000.0 * np.array(i)
+
+    return get_current_timeseries
 
 
 class PhantomHVWebUI:
@@ -82,6 +108,7 @@ class PhantomHVWebUI:
             host, port=port, num_slots=num_slots
         )
         self.hv_timeseries = []
+        self.current_timeseries = []
 
     def run(self, show=False, bind_host=None, bind_port=None):
         self.init_ui()
@@ -136,7 +163,7 @@ class PhantomHVWebUI:
         self.update_timer = ui.timer(0, self.update_state, once=True)
 
     def build_ui(self):
-        with ui.grid(columns=9 * "auto " + "1fr").classes(
+        with ui.grid(columns=10 * "auto " + "1fr").classes(
             "w-full items-baseline text-center gap-y-0"
         ):
             # Setup header row
@@ -149,7 +176,7 @@ class PhantomHVWebUI:
             ui.label("Set voltage").classes("col-span-2")
             ui.label("Voltage")
             ui.label("Current")
-            ui.label("History").classes("text-left")
+            ui.label("History").classes("text-left col-span-2")
             ui.label.default_classes(remove=self._header_font_classes)
 
             for slot in range(self.num_slots):
@@ -228,7 +255,7 @@ class PhantomHVWebUI:
                     ).classes("text-right")
 
                     if channel == 0:
-                        # History (spans 3 rows)
+                        # Voltage history (spans 3 rows)
                         timeseries = TimeSeriesPlot(
                             yaxis_title="Voltage / V",
                         )
@@ -239,6 +266,18 @@ class PhantomHVWebUI:
                                 get_hv_timeseries_updater(slot_state),
                             )
                         )
+                        # Current history (spans 3 rows)
+                        _timeseries = TimeSeriesPlot(
+                            yaxis_title="Current / mA",
+                        )
+                        _timeseries.plot.classes("row-span-3 w-full h-40 self-center")
+                        self.current_timeseries.append(
+                            (
+                                _timeseries,
+                                get_current_timeseries_updater(slot_state),
+                            )
+                        )
+
 
     async def update_state(self):
         """Attempts to update the Phantom HV state buffer. On first success,
@@ -291,7 +330,7 @@ class PhantomHVWebUI:
             while self.update_time < now:
                 self.update_time += self.default_update_interval
 
-        for timeseries, update in self.hv_timeseries:
+        for timeseries, update in self.hv_timeseries + self.current_timeseries:
             x, y = update()
             timeseries.update(x, y)
 

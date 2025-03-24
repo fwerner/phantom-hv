@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+
+- history plot for HV channel currents
+
 ## [0.1.5] - 2025-02-04
 
 ### Fixed
