@@ -8,6 +8,10 @@ from .io import PhantomHVIO
 from . import iostack
 
 
+_ADC_TO_VOLT = 2000 / 16384
+_ADC_TO_AMPERE = (2.5 / 16384) / (330e-3 * (50 / 2))
+
+
 class PhantomHVStateBuffer:
     """Caches all registers of a Phantom HV crate for quick repeated access via
     the `slots` member (which contains `num_slots` `PhantomHVSlotStateBuffer`
@@ -101,12 +105,20 @@ class PhantomHVSlotStateBuffer:
             if unlock:
                 cfg.hv_enable |= 1 << 3
             else:
-                cfg.hv_enable = 0  # disable all HV supplies at the same time to avoid alert
+                cfg.hv_enable = (
+                    0  # disable all HV supplies at the same time to avoid alert
+                )
             self.io.write_slave_dynamic_cfg(self.slot, cfg)
 
     @property
     def hvs(self):
-        return [self.state.adc_states[channel] * 2000 / 16384 for channel in range(3)]
+        return [self.state.adc_states[channel] * _ADC_TO_VOLT for channel in range(3)]
+
+    @property
+    def currents(self):
+        return [
+            self.state.adc_states[3 + channel] * _ADC_TO_AMPERE for channel in range(3)
+        ]
 
 
 class PhantomHVChannelStateBuffer:
@@ -145,7 +157,7 @@ class PhantomHVChannelStateBuffer:
 
     @property
     def hv(self) -> float:
-        return self.state.adc_states[self.channel] * 2000 / 16384
+        return self.state.adc_states[self.channel] * _ADC_TO_VOLT
 
     @property
     def hv_set(self):
@@ -163,8 +175,4 @@ class PhantomHVChannelStateBuffer:
 
     @property
     def current(self):
-        return (
-            self.state.adc_states[3 + self.channel]
-            * (2.5 / 16384)
-            / (330e-3 * (50 / 2))
-        )
+        return self.state.adc_states[3 + self.channel] * _ADC_TO_AMPERE
