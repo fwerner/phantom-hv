@@ -93,7 +93,7 @@ class PhantomHVWebUI:
     _header_font_classes = "font-medium text-purple-600"
 
     def __init__(
-        self, host, port=iostack.default_port, num_slots=1, update_interval=0.2
+        self, host, port=iostack.default_port, num_slots=1, update_interval=0.2, log_interval=1.0,
     ):
         self.host = host
         self.port = port
@@ -103,6 +103,11 @@ class PhantomHVWebUI:
         self.update_time = None
         self.num_failures = 0
         self.update_timer = None
+        self.log_interval = log_interval
+        if self.log_interval > 0.0:
+            self.log_time = time.time()
+        else:
+            self.log_time = float("inf")
 
         self.hv_state = state_buffer.PhantomHVStateBuffer(
             host, port=port, num_slots=num_slots
@@ -318,6 +323,20 @@ class PhantomHVWebUI:
             return
 
         now = time.time()
+        if self.log_time <= now:
+            for slot in range(self.num_slots):
+                slot_state = self.hv_state.slot[slot]
+                print(f"phantomhv,address={self.host},slot={slot} hv_unlocked={slot_state.hv_unlocked},hv_unlocked_ext={slot_state.hv_unlocked_ext} {1e3 * slot_state.last_update:.0f}", flush=False)
+                for channel in range(3):
+                    channel_state = slot_state.channel[channel]
+                    print(f"phantomhv,address={self.host},slot={slot},channel={channel} hv_enabled={channel_state.hv_enabled},hv_set_volt={channel_state.hv_set},hv_volt={channel_state.hv},current_ampere={channel_state.current} {1e3 * channel_state.last_update:.0f}", flush=False)
+
+            self.log_time += self.log_interval
+            while self.log_time < now:
+                self.log_time += self.log_interval
+
+            print(end="", flush=True)
+
         self.num_failures = 0
         if self.timeout_notification is not None:
             self.timeout_notification.set_visibility(False)

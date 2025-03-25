@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Added
+
+- the WebUI now logs measurements to stdout in line protocol format
+
 ## [0.1.6] - 2025-03-24
 
 ### Added
