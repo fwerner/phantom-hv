@@ -327,10 +327,10 @@ class PhantomHVWebUI:
         if self.log_time <= now:
             for slot in range(self.num_slots):
                 slot_state = self.hv_state.slot[slot]
-                print(f"phantomhv,address={self.host},slot={slot} hv_unlocked={slot_state.hv_unlocked},hv_unlocked_ext={slot_state.hv_unlocked_ext} {1e3 * slot_state.last_update:.0f}", flush=False)
+                print(f"phantomhv,address={self.host},slot={slot} hv_unlocked={slot_state.hv_unlocked},hv_unlocked_ext={slot_state.hv_unlocked_ext} {1e9 * slot_state.last_update:.0f}", flush=False)
                 for channel in range(3):
                     channel_state = slot_state.channel[channel]
-                    print(f"phantomhv,address={self.host},slot={slot},channel={channel} hv_enabled={channel_state.hv_enabled},hv_set_volt={channel_state.hv_set},hv_volt={channel_state.hv},current_ampere={channel_state.current} {1e3 * channel_state.last_update:.0f}", flush=False)
+                    print(f"phantomhv,address={self.host},slot={slot},channel={channel} hv_enabled={channel_state.hv_enabled},hv_set_volt={channel_state.hv_set},hv_volt={channel_state.hv},current_ampere={channel_state.current} {1e9 * channel_state.last_update:.0f}", flush=False)
 
             self.log_time += self.log_interval
             while self.log_time < now:

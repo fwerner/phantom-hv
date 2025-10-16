@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- output nanoseconds in line protocol to improve compatibility with telegraf
 - suppress NiceGUI welcome message which generated warnings for line protocol
   readers
 
