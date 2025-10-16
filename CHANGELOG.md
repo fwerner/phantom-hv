@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [0.1.8] - 2025-10-16
+
 ### Changed
 
 - output nanoseconds in line protocol to improve compatibility with telegraf
