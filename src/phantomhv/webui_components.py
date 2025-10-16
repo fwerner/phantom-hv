@@ -124,6 +124,7 @@ class PhantomHVWebUI:
             "reload": False,
             "show": show,
             "native": show,
+            "show_welcome_message": False,
         }
 
         if show:

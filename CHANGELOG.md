@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Changed
+
+- suppress NiceGUI welcome message which generated warnings for line protocol
+  readers
+
 ## [0.1.7] - 2025-03-25
 
 ### Added
