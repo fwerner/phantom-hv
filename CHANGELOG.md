@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Fixed
+
+- add minimum width of set voltage input field
+
 ## [0.1.8] - 2025-10-16
 
 ### Changed

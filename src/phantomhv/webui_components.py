@@ -239,6 +239,7 @@ class PhantomHVWebUI:
                         )
                         .bind_enabled_from(channel_hv_enable, "value")
                         .props("dense suffix='V' size='xl'")
+                        .classes("min-w-[4rem]")
                     )
                     ui.button(
                         "set",
